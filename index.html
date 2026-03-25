@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STARSTACK • Astrophotography Stacker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0a0e27;
+            --bg-navy: #0f172a;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --accent-purple: #a78bfa;
+            --accent-violet: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-gold: #fbbf24;
+            --accent-green: #10b981;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.15);
+        }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Starfield Background */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes shootingStar {
+            0% { transform: translateX(0) translateY(0); opacity: 1; }
+            100% { transform: translateX(300px) translateY(300px); opacity: 0; }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            margin-bottom: 30px;
+            box-shadow: var(--glass-shadow);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* Glass Card */
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: var(--glass-shadow);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '▸';
+            color: var(--accent-blue);
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--glass-border);
+            border-radius: 16px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(139, 92, 246, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.15);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Image Preview Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-preview {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--glass-border);
+            background: var(--bg-navy);
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(239, 68, 68, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .image-preview .remove-btn:hover {
+            background: rgba(239, 68, 68, 1);
+            transform: scale(1.1);
+        }
+
+        /* Mode Selector */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            background: var(--bg-navy);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: 'Syne', sans-serif;
+            color: var(--text-primary);
+        }
+
+        .mode-btn:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .mode-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .mode-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .mode-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-value {
+            color: var(--accent-gold);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-navy);
+            outline: none;
+            border: 1px solid var(--glass-border);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            cursor: pointer;
+            border: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--bg-navy);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-purple);
+        }
+
+        /* Action Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border: none;
+            border-radius: 12px;
+            padding: 18px 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-navy);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 35px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-navy);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue), var(--accent-green));
+            background-size: 200% 100%;
+            animation: progressShine 2s linear infinite;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes progressShine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Canvas */
+        #previewCanvas {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid var(--glass-border);
+            display: none;
+            margin-top: 20px;
+            background: var(--bg-navy);
+        }
+
+        #previewCanvas.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: var(--bg-navy);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .upload-zone {
+                padding: 40px 15px;
+            }
+
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
+            }
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+
+    <div class="container">
+        <header>
+            <h1>STARSTACK</h1>
+            <p class="subtitle">MOBILE ASTROPHOTOGRAPHY STACKER</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="card">
+            <h2 class="card-title">Image Upload</h2>
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">🌌</div>
+                <div class="upload-text">Tap or drag images here</div>
+                <div class="upload-hint">Upload 2+ astrophotography images</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" multiple>
+            
+            <div class="image-grid" id="imageGrid"></div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="imageCount">0</div>
+                    <div class="stat-label">IMAGES LOADED</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalSize">0 MB</div>
+                    <div class="stat-label">TOTAL SIZE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stacking Mode -->
+        <div class="card" id="modeCard" style="display: none;">
+            <h2 class="card-title">Stacking Mode</h2>
+            <div class="mode-selector">
+                <div class="mode-btn active" data-mode="trails">
+                    <div class="mode-icon">✨</div>
+                    <div class="mode-name">Star Trails</div>
+                    <div class="mode-desc">Lighten blend for light trails</div>
+                </div>
+                <div class="mode-btn" data-mode="average">
+                    <div class="mode-icon">🌟</div>
+                    <div class="mode-name">Deep Sky</div>
+                    <div class="mode-desc">Average for noise reduction</div>
+                </div>
+                <div class="mode-btn" data-mode="median">
+                    <div class="mode-icon">💫</div>
+                    <div class="mode-name">Median Stack</div>
+                    <div class="mode-desc">Remove artifacts & satellites</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Controls -->
+        <div class="card" id="controlsCard" style="display: none;">
+            <h2 class="card-title">Processing Options</h2>
+            <div class="controls">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoAlign" checked>
+                    <label for="autoAlign">Auto-align stars (recommended)</label>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Brightness Boost</span>
+                        <span class="control-value" id="brightnessValue">0%</span>
+                    </div>
+                    <input type="range" id="brightness" min="-50" max="50" value="0">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Contrast</span>
+                        <span class="control-value" id="contrastValue">100%</span>
+                    </div>
+                    <input type="range" id="contrast" min="50" max="150" value="100">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Saturation</span>
+                        <span class="control-value" id="saturationValue">100%</span>
+                    </div>
+                    <input type="range" id="saturation" min="50" max="200" value="100">
+                </div>
+            </div>
+
+            <button class="btn-primary" id="processBtn">
+                <span>🚀 PROCESS STACK</span>
+            </button>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">Initializing...</div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="card" id="resultCard" style="display: none;">
+            <h2 class="card-title">Result</h2>
+            <canvas id="previewCanvas"></canvas>
+            <button class="btn-primary" id="downloadBtn">
+                <span>💾 DOWNLOAD IMAGE</span>
+            </button>
+            <button class="btn-secondary" id="resetBtn">
+                <span>🔄 START NEW STACK</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Starfield Animation
+        const starfield = document.getElementById('starfield');
+        const ctx = starfield.getContext('2d');
+        
+        function resizeCanvas() {
+            starfield.width = window.innerWidth;
+            starfield.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Generate stars
+        const stars = [];
+        for (let i = 0; i < 150; i++) {
+            stars.push({
+                x: Math.random() * starfield.width,
+                y: Math.random() * starfield.height,
+                radius: Math.random() * 1.5,
+                opacity: Math.random(),
+                speed: Math.random() * 0.5
+            });
+        }
+        
+        function animateStars() {
+            ctx.clearRect(0, 0, starfield.width, starfield.height);
+            
+            stars.forEach(star => {
+                star.opacity += star.speed * 0.01;
+                if (star.opacity > 1) star.opacity = 0;
+                
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                ctx.fill();
+            });
+            
+            requestAnimationFrame(animateStars);
+        }
+        
+        animateStars();
+
+        // App State
+        let loadedImages = [];
+        let currentMode = 'trails';
+        let processingCanvas = null;
+        let processingCtx = null;
+
+        // DOM Elements
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const imageGrid = document.getElementById('imageGrid');
+        const imageCount = document.getElementById('imageCount');
+        const totalSize = document.getElementById('totalSize');
+        const modeCard = document.getElementById('modeCard');
+        const controlsCard = document.getElementById('controlsCard');
+        const resultCard = document.getElementById('resultCard');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const autoAlign = document.getElementById('autoAlign');
+        const brightnessSlider = document.getElementById('brightness');
+        const contrastSlider = document.getElementById('contrast');
+        const saturationSlider = document.getElementById('saturation');
+        const brightnessValue = document.getElementById('brightnessValue');
+        const contrastValue = document.getElementById('contrastValue');
+        const saturationValue = document.getElementById('saturationValue');
+
+        // Upload Handlers
+        uploadZone.addEventListener('click', () => fileInput.click());
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Mode Selection
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+            });
+        });
+
+        // Control Updates
+        brightnessSlider.addEventListener('input', (e) => {
+            brightnessValue.textContent = `${e.target.value}%`;
+        });
+
+        contrastSlider.addEventListener('input', (e) => {
+            contrastValue.textContent = `${e.target.value}%`;
+        });
+
+        saturationSlider.addEventListener('input', (e) => {
+            saturationValue.textContent = `${e.target.value}%`;
+        });
+
+        // Process Button
+        processBtn.addEventListener('click', processStack);
+        downloadBtn.addEventListener('click', downloadResult);
+        resetBtn.addEventListener('click', reset);
+
+        // File Handling
+        async function handleFiles(files) {
+            const fileArray = Array.from(files);
+            let totalBytes = 0;
+
+            for (const file of fileArray) {
+                if (!file.type.startsWith('image/')) continue;
+
+                const reader = new FileReader();
+                const img = new Image();
+
+                await new Promise((resolve) => {
+                    reader.onload = (e) => {
+                        img.onload = () => {
+                            loadedImages.push({
+                                img: img,
+                                file: file,
+                                size: file.size
+                            });
+                            totalBytes += file.size;
+                            addImagePreview(img, loadedImages.length - 1);
+                            resolve();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            updateStats();
+            
+            if (loadedImages.length >= 2) {
+                modeCard.style.display = 'block';
+                controlsCard.style.display = 'block';
+            }
+        }
+
+        function addImagePreview(img, index) {
+            const preview = document.createElement('div');
+            preview.className = 'image-preview';
+            
+            const imgElement = document.createElement('img');
+            imgElement.src = img.src;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '×';
+            removeBtn.onclick = () => removeImage(index);
+            
+            preview.appendChild(imgElement);
+            preview.appendChild(removeBtn);
+            imageGrid.appendChild(preview);
+        }
+
+        function removeImage(index) {
+            loadedImages.splice(index, 1);
+            imageGrid.innerHTML = '';
+            loadedImages.forEach((data, i) => addImagePreview(data.img, i));
+            updateStats();
+            
+            if (loadedImages.length < 2) {
+                modeCard.style.display = 'none';
+                controlsCard.style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            imageCount.textContent = loadedImages.length;
+            const totalBytes = loadedImages.reduce((sum, data) => sum + data.size, 0);
+            totalSize.textContent = `${(totalBytes / (1024 * 1024)).toFixed(2)} MB`;
+        }
+
+        // Image Processing
+        async function processStack() {
+            if (loadedImages.length < 2) return;
+
+            processBtn.disabled = true;
+            progressContainer.classList.add('active');
+            resultCard.style.display = 'none';
+
+            try {
+                updateProgress(10, 'Initializing canvas...');
+                
+                // Setup canvas with first image dimensions
+                const firstImg = loadedImages[0].img;
+                previewCanvas.width = firstImg.width;
+                previewCanvas.height = firstImg.height;
+                const ctx = previewCanvas.getContext('2d');
+
+                // Create processing canvas
+                if (!processingCanvas) {
+                    processingCanvas = document.createElement('canvas');
+                    processingCanvas.width = firstImg.width;
+                    processingCanvas.height = firstImg.height;
+                    processingCtx = processingCanvas.getContext('2d');
+                }
+
+                updateProgress(20, 'Aligning images...');
+
+                // Align images if enabled
+                let alignedImages = loadedImages;
+                if (autoAlign.checked && loadedImages.length > 1) {
+                    alignedImages = await alignImages(loadedImages);
+                }
+
+                updateProgress(40, 'Stacking images...');
+
+                // Stack based on mode
+                switch (currentMode) {
+                    case 'trails':
+                        await stackLighten(ctx, alignedImages);
+                        break;
+                    case 'average':
+                        await stackAverage(ctx, alignedImages);
+                        break;
+                    case 'median':
+                        await stackMedian(ctx, alignedImages);
+                        break;
+                }
+
+                updateProgress(80, 'Applying adjustments...');
+
+                // Apply adjustments
+                applyAdjustments(ctx);
+
+                updateProgress(100, 'Complete!');
+
+                // Show result
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                    resultCard.style.display = 'block';
+                    previewCanvas.classList.add('active');
+                    processBtn.disabled = false;
+                }, 500);
+
+            } catch (error) {
+                console.error('Processing error:', error);
+                updateProgress(0, 'Error occurred. Please try again.');
+                processBtn.disabled = false;
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                }, 2000);
+            }
+        }
+
+        async function alignImages(images) {
+            // Simple alignment based on detecting brightest points (stars)
+            const reference = images[0];
+            const aligned = [reference];
+
+            for (let i = 1; i < images.length; i++) {
+                updateProgress(20 + (i / images.length) * 20, `Aligning image ${i + 1}/${images.length}...`);
+                
+                // For mobile performance, we'll do a simplified alignment
+                // In production, this could use feature detection algorithms
+                const refStars = detectBrightPoints(reference.img);
+                const imgStars = detectBrightPoints(images[i].img);
+                
+                const offset = calculateOffset(refStars, imgStars);
+                
+                aligned.push({
+                    img: images[i].img,
+                    offset: offset,
+                    file: images[i].file,
+                    size: images[i].size
+                });
+            }
+
+            return aligned;
+        }
+
+        function detectBrightPoints(img) {
+            // Simplified star detection - finds brightest regions
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const points = [];
+            
+            // Sample grid for performance
+            const step = 20;
+            for (let y = 0; y < canvas.height; y += step) {
+                for (let x = 0; x < canvas.width; x += step) {
+                    const i = (y * canvas.width + x) * 4;
+                    const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    
+                    if (brightness > 200) {
+                        points.push({ x, y, brightness });
+                    }
+                }
+            }
+            
+            // Return top 50 brightest points
+            return points.sort((a, b) => b.brightness - a.brightness).slice(0, 50);
+        }
+
+        function calculateOffset(refPoints, imgPoints) {
+            // Simple centroid-based offset calculation
+            if (refPoints.length === 0 || imgPoints.length === 0) {
+                return { x: 0, y: 0 };
+            }
+            
+            const refCentroid = {
+                x: refPoints.reduce((sum, p) => sum + p.x, 0) / refPoints.length,
+                y: refPoints.reduce((sum, p) => sum + p.y, 0) / refPoints.length
+            };
+            
+            const imgCentroid = {
+                x: imgPoints.reduce((sum, p) => sum + p.x, 0) / imgPoints.length,
+                y: imgPoints.reduce((sum, p) => sum + p.y, 0) / imgPoints.length
+            };
+            
+            return {
+                x: Math.round(refCentroid.x - imgCentroid.x),
+                y: Math.round(refCentroid.y - imgCentroid.y)
+            };
+        }
+
+        async function stackLighten(ctx, images) {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            
+            for (let i = 0; i < images.length; i++) {
+                updateProgress(40 + (i / images.length) * 30, `Stacking ${i + 1}/${images.length}...`);
+                
+                const offset = images[i].offset || { x: 0, y: 0 };
+                ctx.globalCompositeOperation = 'lighten';
+                ctx.drawImage(images[i].img, offset.x, offset.y);
+                
+                // Allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        async function stackAverage(ctx, images) {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = ctx.canvas.width;
+            tempCanvas.height = ctx.canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Accumulate
+            const accumulated = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
+            const accData = accumulated.data;
+            
+            for (let i = 0; i < images.length; i++) {
+                updateProgress(40 + (i / images.length) * 30, `Averaging ${i + 1}/${images.length}...`);
+                
+                tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                const offset = images[i].offset || { x: 0, y: 0 };
+                tempCtx.drawImage(images[i].img, offset.x, offset.y);
+                
+                const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const data = imgData.data;
+                
+                for (let j = 0; j < data.length; j++) {
+                    accData[j] += data[j];
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
+            // Average
+            for (let i = 0; i < accData.length; i++) {
+                accData[i] /= images.length;
+            }
+            
+            ctx.putImageData(accumulated, 0, 0);
+        }
+
+        async function stackMedian(ctx, images) {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = ctx.canvas.width;
+            tempCanvas.height = ctx.canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            const result = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
+            const width = ctx.canvas.width;
+            const height = ctx.canvas.height;
+            
+            // Collect all pixel values
+            const pixelArrays = [];
+            for (let i = 0; i < images.length; i++) {
+                updateProgress(40 + (i / images.length) * 20, `Loading ${i + 1}/${images.length}...`);
+                
+                tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                const offset = images[i].offset || { x: 0, y: 0 };
+                tempCtx.drawImage(images[i].img, offset.x, offset.y);
+                
+                pixelArrays.push(tempCtx.getImageData(0, 0, width, height).data);
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
+            // Calculate median for each pixel
+            updateProgress(65, 'Calculating median values...');
+            
+            for (let i = 0; i < width * height * 4; i += 4) {
+                const rValues = pixelArrays.map(arr => arr[i]);
+                const gValues = pixelArrays.map(arr => arr[i + 1]);
+                const bValues = pixelArrays.map(arr => arr[i + 2]);
+                const aValues = pixelArrays.map(arr => arr[i + 3]);
+                
+                result.data[i] = median(rValues);
+                result.data[i + 1] = median(gValues);
+                result.data[i + 2] = median(bValues);
+                result.data[i + 3] = median(aValues);
+                
+                if (i % (width * 100) === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 1));
+                }
+            }
+            
+            ctx.putImageData(result, 0, 0);
+        }
+
+        function median(values) {
+            const sorted = values.sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+        }
+
+        function applyAdjustments(ctx) {
+            const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+            const data = imageData.data;
+            
+            const brightness = parseInt(brightnessSlider.value);
+            const contrast = parseInt(contrastSlider.value) / 100;
+            const saturation = parseInt(saturationSlider.value) / 100;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+                
+                // Brightness
+                r += brightness * 2.55;
+                g += brightness * 2.55;
+                b += brightness * 2.55;
+                
+                // Contrast
+                r = ((r / 255 - 0.5) * contrast + 0.5) * 255;
+                g = ((g / 255 - 0.5) * contrast + 0.5) * 255;
+                b = ((b / 255 - 0.5) * contrast + 0.5) * 255;
+                
+                // Saturation
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                r = gray + saturation * (r - gray);
+                g = gray + saturation * (g - gray);
+                b = gray + saturation * (b - gray);
+                
+                // Clamp
+                data[i] = Math.max(0, Math.min(255, r));
+                data[i + 1] = Math.max(0, Math.min(255, g));
+                data[i + 2] = Math.max(0, Math.min(255, b));
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function updateProgress(percent, text) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = text;
+        }
+
+        function downloadResult() {
+            const link = document.createElement('a');
+            link.download = `starstack_${Date.now()}.png`;
+            link.href = previewCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function reset() {
+            loadedImages = [];
+            imageGrid.innerHTML = '';
+            updateStats();
+            modeCard.style.display = 'none';
+            controlsCard.style.display = 'none';
+            resultCard.style.display = 'none';
+            previewCanvas.classList.remove('active');
+            progressContainer.classList.remove('active');
+            fileInput.value = '';
+            
+            // Reset controls
+            brightnessSlider.value = 0;
+            contrastSlider.value = 100;
+            saturationSlider.value = 100;
+            brightnessValue.textContent = '0%';
+            contrastValue.textContent = '100%';
+            saturationValue.textContent = '100%';
+            autoAlign.checked = true;
+            
+            // Reset mode
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-mode="trails"]').classList.add('active');
+            currentMode = 'trails';
+        }
+    </script>
+</body>
+</html>
