@@ -1,138 +1,103 @@
-# STARSTACK - Mobile Astrophotography Stacker
+# 🌌 Sequator — Astrophotography Image Stacking
 
-## 🚀 Deploy to GitHub Pages (5 minutes)
-
-### Step 1: Create a new repo
-1. Go to github.com/new
-2. Name it: `starstack` (or whatever you want)
-3. Make it **Public**
-4. Click "Create repository"
-
-### Step 2: Upload the file
-1. Click "uploading an existing file"
-2. Drag `starstack.html` into the browser
-3. Rename it to `index.html` (IMPORTANT!)
-4. Click "Commit changes"
-
-### Step 3: Enable GitHub Pages
-1. Go to Settings > Pages
-2. Source: "Deploy from a branch"
-3. Branch: `main` / `root`
-4. Click Save
-
-### Step 4: Access your app
-Your app will be live at:
-`https://yourusername.github.io/starstack/`
-
-(Replace `yourusername` with your GitHub username)
+> A free, powerful Windows desktop application for aligning and stacking astrophotography frames.
+> This repository hosts the **official website** for the Sequator application.
 
 ---
 
-## 📱 Features
+## 📸 What is Sequator?
 
-✨ **Three Stacking Modes:**
-- **Star Trails**: Lighten blend mode for light trails
-- **Deep Sky**: Averaging for noise reduction
-- **Median Stack**: Remove satellites & artifacts
+**Sequator** is a free Windows application developed by **Yi-Ruei Wu** that automates the most critical steps in astrophotography post-processing:
 
-🎯 **Processing Options:**
-- Auto star alignment (recommended)
-- Brightness boost
-- Contrast adjustment
-- Saturation control
-
-💫 **Mobile-Optimized:**
-- Touch-friendly interface
-- Direct camera/gallery access
-- Responsive design
-- Your Dark Glassmorphism aesthetic
+- **Star alignment** across multiple frames using pattern-matching algorithms
+- **Image stacking** to dramatically reduce noise and reveal faint detail
+- **Sky gradient removal** to correct light pollution and uneven illumination
+- **Foreground/background composition** for Milky Way landscape shots
+- **Hot pixel and artifact removal** from long-exposure frames
+- **16-bit TIFF output** for maximum dynamic range in post-processing
 
 ---
 
-## 🎨 How to Use
+## 🖥️ Website Overview
 
-1. **Upload Images**: Tap the upload zone or drag 2+ astrophotography images
-2. **Choose Mode**: Select your stacking mode (Star Trails, Deep Sky, or Median)
-3. **Adjust Settings**: Fine-tune brightness, contrast, saturation
-4. **Process**: Hit the PROCESS STACK button
-5. **Download**: Save your stacked result
+This repository contains the full source code for the Sequator website:
 
----
-
-## 🔧 Technical Details
-
-- **100% client-side** - no server needed
-- **Pure HTML/CSS/JavaScript** - single file deployment
-- **Canvas-based processing** - fast on modern phones
-- **Progressive loading** - handles large image sets
-- **Smart alignment** - detects brightest points (stars) for alignment
+| File | Description |
+|------|-------------|
+| `index.html` | Main HTML structure — hero, features, formats, workflow, download |
+| `style.css` | Full stylesheet — dark cosmic aesthetic with CSS animations |
+| `app.js` | JavaScript — starfield canvas, tabs, scroll reveal, cursor effects |
+| `README.md` | This file |
+| `Sequator162r2.zip` | The Sequator application ZIP (place in root for download link to work) |
 
 ---
 
-## 📊 Performance Tips
+## ✨ Website Features
 
-- **Image size**: Works best with 2-10 images
-- **Resolution**: Phone camera resolution (12-50MP) works great
-- **File size**: Keep under 50MB total for smooth processing
-- **Processing time**: 5-30 seconds depending on image count/size
-
----
-
-## 🎯 Workflow Examples
-
-### Star Trails
-1. Upload 20-50 short exposures (15-30 seconds each)
-2. Select "Star Trails" mode
-3. Enable auto-align
-4. Process
-5. Download epic star trail composite
-
-### Deep Sky / Milky Way
-1. Upload 5-15 exposures of same target
-2. Select "Deep Sky" mode
-3. Enable auto-align
-4. Boost brightness slightly (+10-20%)
-5. Process for noise-reduced result
-
-### Meteor/Satellite Removal
-1. Upload your image set
-2. Select "Median Stack" mode
-3. Enable auto-align
-4. Median will remove transient objects
-5. Download clean result
+- **Animated starfield** background with shooting stars rendered on HTML5 Canvas
+- **Tabbed format browser** showing all 30+ supported image formats
+- **Scroll-reveal animations** with staggered delays
+- **Cursor glow effect** on desktop
+- **Subtle card tilt** on feature cards (desktop)
+- **Fully responsive** layout for mobile and tablet
+- **No dependencies** — pure HTML, CSS, and vanilla JavaScript
 
 ---
 
-## 📝 Notes
+## 📁 Supported Image Formats
 
-- **Legal & Original**: Completely new code, no Sequator restrictions
-- **Your Design**: Custom Dark Glassmorphism / Deep Space Dev aesthetic
-- **Portable**: Works on ANY device with a browser
-- **Offline-capable**: Once loaded, works without internet
+Sequator supports virtually every format used in astrophotography:
 
----
+### RAW Formats (via LibRaw)
+`CR2` `CR3` `NEF` `NRW` `ARW` `SRF` `SR2` `RAF` `ORF` `PEF` `DNG` `RW2` `RWL` `3FR` `MRW` `X3F` `ERF` `K25` `KDC` `DCR` `IIQ`
 
-## 🎨 Customization
+### Standard Formats (via LibTiff & wxWidgets)
+`TIFF` `TIF` `JPG` `JPEG` `PNG` `BMP` `GIF` `PPM` `PGM`
 
-Want to tweak the colors or fonts? Edit the CSS variables in the `<style>` section:
-
-```css
-:root {
-    --accent-purple: #a78bfa;  /* Change to your preferred accent */
-    --accent-blue: #3b82f6;    /* Secondary accent */
-    --bg-deep: #0a0e27;        /* Background color */
-}
-```
+### Specialty / Astronomical Formats
+`FITS` `FIT` `FTS` `SER` `AVI`
 
 ---
 
-## 🐛 Issues?
+## 🔧 Application Requirements
 
-If processing fails:
-- Try with fewer/smaller images first
-- Check browser console (F12) for errors
-- Make sure images are actual photos (not corrupted)
+- **OS**: Windows x64
+- **Runtime**: [Visual C++ 2015 Redistributable x64](https://www.microsoft.com/en-US/download/details.aspx?id=48145)
+- **Version**: 1.6.2 r2 (released Aug 18, 2024)
 
 ---
 
-**Built with 💫 for mobile astrophotography**
+## 🚀 Workflow
+
+1. **Load Frames** — Add light, dark, flat, and bias frames in any mix of formats
+2. **Configure** — Choose stacking algorithm (Mean, Median, Kappa-Sigma, Weighted Average)
+3. **Align & Stack** — Sequator registers frames using star patterns and blends them
+4. **Export** — Save as 16-bit TIFF for processing in Lightroom, Photoshop, or PixInsight
+
+---
+
+## 📄 License & Credits
+
+Sequator is developed by **Yi-Ruei Wu** and is free for **non-commercial use only**.
+
+> - Redistribution is allowed but must include all original files and this notice
+> - Commercial use, modification, and derivative works are prohibited
+> - See `README.txt` inside the application ZIP for full license terms
+
+### Libraries Used
+
+| Library | License | Use |
+|---------|---------|-----|
+| [LibRaw](http://www.libraw.org/) | LGPL 2.1 / CDDL 1.0 | RAW image decoding |
+| [LibTiff](http://www.libtiff.org/) | BSD-style | TIFF read/write |
+| [wxWidgets](http://www.wxwidgets.org/) | wxWindows Library Licence | GUI framework |
+
+---
+
+## 🌐 Official Site
+
+[https://sites.google.com/view/sequator/](https://sites.google.com/view/sequator/)
+
+---
+
+*Website designed for GitHub Pages. Place `Sequator162r2.zip` in the root directory for the download button to function correctly.*
