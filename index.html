@@ -1,326 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sequator — Astrophotography Stacking</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sequator Web — Astrophotography Stacker</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
-  <!-- Star canvas background -->
-  <canvas id="starfield"></canvas>
+<canvas id="starfield"></canvas>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-logo">
-      <span class="logo-bracket">[</span>
-      <span class="logo-text">SEQUATOR</span>
-      <span class="logo-bracket">]</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#formats">Formats</a></li>
-      <li><a href="#howto">How It Works</a></li>
-      <li><a href="#download">Download</a></li>
-    </ul>
-    <a href="#download" class="nav-cta">Download v1.6.2</a>
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="6" stroke="#3abfff" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="13" stroke="#3abfff" stroke-width="0.75" stroke-dasharray="3 2"/>
+      <circle cx="16" cy="3" r="2" fill="#3abfff"/>
+      <circle cx="29" cy="16" r="1.5" fill="#7b5fff"/>
+    </svg>
+    <span class="logo-text">SEQUATOR <span class="logo-sub">WEB</span></span>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-tab active" data-panel="load">01 LOAD</button>
+    <button class="nav-tab" data-panel="calibrate">02 CALIBRATE</button>
+    <button class="nav-tab" data-panel="settings">03 SETTINGS</button>
+    <button class="nav-tab" data-panel="stack">04 STACK</button>
   </nav>
+  <div class="header-info">
+    <span id="frame-count">0 frames</span>
+  </div>
+</header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">ASTROPHOTOGRAPHY STACKING</div>
-      <h1 class="hero-title">
-        <span class="title-line">CAPTURE</span>
-        <span class="title-line accent">THE COSMOS</span>
-        <span class="title-line">IN PERFECT CLARITY</span>
-      </h1>
-      <p class="hero-sub">
-        Sequator aligns, stacks, and processes your night-sky frames with surgical precision —
-        removing noise, preserving stars, and revealing the universe hiding in your images.
-      </p>
-      <div class="hero-actions">
-        <a href="#download" class="btn-primary">
-          <span class="btn-icon">↓</span> Download Free
-        </a>
-        <a href="#howto" class="btn-ghost">See How It Works →</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-num">v1.6.2</span>
-          <span class="stat-label">Latest Release</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">30+</span>
-          <span class="stat-label">Image Formats</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">Windows</span>
-          <span class="stat-label">x64 Platform</span>
-        </div>
-      </div>
+<!-- MAIN APP -->
+<main class="app">
+
+  <!-- ========= PANEL 1: LOAD ========= -->
+  <section class="panel active" id="panel-load">
+    <div class="panel-header">
+      <h1>Load Frames</h1>
+      <p>Add your light frames, dark frames, flat frames, and bias frames. Accepts JPG, PNG, TIFF, BMP, WebP.</p>
     </div>
-    <div class="hero-graphic">
-      <div class="orbit-ring ring-1"></div>
-      <div class="orbit-ring ring-2"></div>
-      <div class="orbit-ring ring-3"></div>
-      <div class="planet-core">
-        <div class="planet-glow"></div>
-        <div class="planet-surface"></div>
-        <div class="planet-shimmer"></div>
+
+    <div class="frame-types">
+
+      <div class="frame-type-card" id="card-light">
+        <div class="ftc-header">
+          <div class="ftc-dot" style="background:#3abfff"></div>
+          <h3>Light Frames</h3>
+          <span class="ftc-count" id="count-light">0</span>
+        </div>
+        <p class="ftc-desc">Your main exposures of the night sky</p>
+        <div class="drop-zone" id="dz-light" data-type="light">
+          <div class="dz-inner">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v24M16 20l8-12 8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="36" width="32" height="4" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span>Drop images or <label class="file-label">browse<input type="file" accept="image/*,.tiff,.tif" multiple data-type="light"/></label></span>
+          </div>
+        </div>
+        <div class="thumb-list" id="thumbs-light"></div>
       </div>
+
+      <div class="frame-type-card" id="card-dark">
+        <div class="ftc-header">
+          <div class="ftc-dot" style="background:#f0a500"></div>
+          <h3>Dark Frames</h3>
+          <span class="ftc-count" id="count-dark">0</span>
+        </div>
+        <p class="ftc-desc">Same exposure/ISO, lens cap on — removes sensor noise</p>
+        <div class="drop-zone" id="dz-dark" data-type="dark">
+          <div class="dz-inner">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v24M16 20l8-12 8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="36" width="32" height="4" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span>Drop images or <label class="file-label">browse<input type="file" accept="image/*,.tiff,.tif" multiple data-type="dark"/></label></span>
+          </div>
+        </div>
+        <div class="thumb-list" id="thumbs-dark"></div>
+      </div>
+
+      <div class="frame-type-card" id="card-flat">
+        <div class="ftc-header">
+          <div class="ftc-dot" style="background:#7b5fff"></div>
+          <h3>Flat Frames <span class="optional-tag">optional</span></h3>
+          <span class="ftc-count" id="count-flat">0</span>
+        </div>
+        <p class="ftc-desc">Evenly-lit frames to correct vignetting</p>
+        <div class="drop-zone" id="dz-flat" data-type="flat">
+          <div class="dz-inner">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v24M16 20l8-12 8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="36" width="32" height="4" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span>Drop images or <label class="file-label">browse<input type="file" accept="image/*,.tiff,.tif" multiple data-type="flat"/></label></span>
+          </div>
+        </div>
+        <div class="thumb-list" id="thumbs-flat"></div>
+      </div>
+
+      <div class="frame-type-card" id="card-bias">
+        <div class="ftc-header">
+          <div class="ftc-dot" style="background:#ff5f7b"></div>
+          <h3>Bias Frames <span class="optional-tag">optional</span></h3>
+          <span class="ftc-count" id="count-bias">0</span>
+        </div>
+        <p class="ftc-desc">Zero-second exposures — removes read noise offset</p>
+        <div class="drop-zone" id="dz-bias" data-type="bias">
+          <div class="dz-inner">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v24M16 20l8-12 8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="36" width="32" height="4" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span>Drop images or <label class="file-label">browse<input type="file" accept="image/*,.tiff,.tif" multiple data-type="bias"/></label></span>
+          </div>
+        </div>
+        <div class="thumb-list" id="thumbs-bias"></div>
+      </div>
+
     </div>
-    <div class="scroll-hint">
-      <span>SCROLL TO EXPLORE</span>
-      <div class="scroll-line"></div>
+
+    <div class="panel-footer">
+      <button class="btn-next" id="btn-to-calibrate" disabled>Next: Calibrate →</button>
     </div>
   </section>
 
-  <!-- Features -->
-  <section class="features" id="features">
-    <div class="section-header">
-      <div class="section-tag">// CORE CAPABILITIES</div>
-      <h2 class="section-title">Built for the <span class="accent">Night Sky</span></h2>
+  <!-- ========= PANEL 2: CALIBRATE ========= -->
+  <section class="panel" id="panel-calibrate">
+    <div class="panel-header">
+      <h1>Calibration Options</h1>
+      <p>Configure how calibration frames are applied to your light frames before stacking.</p>
     </div>
-    <div class="features-grid">
 
-      <div class="feature-card" data-delay="0">
-        <div class="feature-icon">
-          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="10" stroke="currentColor" stroke-width="2"/><line x1="24" y1="4" x2="24" y2="14" stroke="currentColor" stroke-width="2"/><line x1="24" y1="34" x2="24" y2="44" stroke="currentColor" stroke-width="2"/><line x1="4" y1="24" x2="14" y2="24" stroke="currentColor" stroke-width="2"/><line x1="34" y1="24" x2="44" y2="24" stroke="currentColor" stroke-width="2"/></svg>
-        </div>
-        <h3>Star Alignment</h3>
-        <p>Automatically detects and aligns stars across all frames using sub-pixel precision algorithms. Corrects for rotation, translation, and atmospheric drift between shots.</p>
-        <div class="feature-tag">AUTO ALIGN</div>
+    <div class="settings-grid">
+
+      <div class="setting-block">
+        <h3>Dark Frame Subtraction</h3>
+        <p>Removes thermal noise from sensor at the shooting temperature.</p>
+        <label class="toggle-row">
+          <span>Enable dark subtraction</span>
+          <div class="toggle" id="tog-dark"><div class="toggle-knob"></div></div>
+        </label>
+        <label class="setting-row" id="row-dark-scale">
+          <span>Scale darks to exposure</span>
+          <input type="checkbox" id="dark-scale" checked/>
+        </label>
       </div>
 
-      <div class="feature-card" data-delay="100">
-        <div class="feature-icon">
-          <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="15" height="15" rx="2" stroke="currentColor" stroke-width="2"/><rect x="27" y="6" width="15" height="15" rx="2" stroke="currentColor" stroke-width="2"/><rect x="6" y="27" width="15" height="15" rx="2" stroke="currentColor" stroke-width="2"/><rect x="27" y="27" width="15" height="15" rx="2" stroke="currentColor" stroke-width="2"/><line x1="24" y1="10" x2="24" y2="38" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3"/><line x1="10" y1="24" x2="38" y2="24" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3"/></svg>
-        </div>
-        <h3>Image Stacking</h3>
-        <p>Stack dozens to hundreds of exposures using Mean, Median, Kappa-Sigma, or Weighted Average methods to dramatically reduce noise while preserving faint nebulosity and star color.</p>
-        <div class="feature-tag">NOISE REDUCTION</div>
+      <div class="setting-block">
+        <h3>Flat Field Correction</h3>
+        <p>Corrects lens vignetting and dust spots on the sensor.</p>
+        <label class="toggle-row">
+          <span>Enable flat correction</span>
+          <div class="toggle" id="tog-flat"><div class="toggle-knob"></div></div>
+        </label>
+        <label class="setting-row">
+          <span>Normalize flat master</span>
+          <input type="checkbox" id="flat-normalize" checked/>
+        </label>
       </div>
 
-      <div class="feature-card" data-delay="200">
-        <div class="feature-icon">
-          <svg viewBox="0 0 48 48" fill="none"><path d="M8 40 L20 20 L28 30 L36 16 L44 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="20" cy="20" r="3" fill="currentColor"/><circle cx="36" cy="16" r="3" fill="currentColor"/></svg>
-        </div>
-        <h3>Sky Gradient Removal</h3>
-        <p>Intelligent light pollution and gradient correction removes uneven sky glow from urban shooting locations, recovering shadow detail and natural color balance.</p>
-        <div class="feature-tag">LIGHT POLLUTION</div>
+      <div class="setting-block">
+        <h3>Bias Subtraction</h3>
+        <p>Removes constant offset added by the camera's analog-to-digital converter.</p>
+        <label class="toggle-row">
+          <span>Enable bias subtraction</span>
+          <div class="toggle" id="tog-bias"><div class="toggle-knob"></div></div>
+        </label>
       </div>
 
-      <div class="feature-card" data-delay="300">
-        <div class="feature-icon">
-          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="16" stroke="currentColor" stroke-width="2"/><path d="M24 8 A16 16 0 0 1 40 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 12 L20 24 L14 30" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>
-        </div>
-        <h3>Foreground Composition</h3>
-        <p>Separate foreground and sky stacking lets you combine a sharp landscape with a deep-sky stacked background — perfect for Milky Way landscape composites.</p>
-        <div class="feature-tag">LANDSCAPE MODE</div>
-      </div>
-
-      <div class="feature-card" data-delay="400">
-        <div class="feature-icon">
-          <svg viewBox="0 0 48 48" fill="none"><path d="M24 6 L28 18 L40 18 L30 26 L34 38 L24 30 L14 38 L18 26 L8 18 L20 18 Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
-        </div>
+      <div class="setting-block">
         <h3>Hot Pixel Removal</h3>
-        <p>Automatically detects and eliminates hot pixels, amp glow, and sensor artifacts from long-exposure astrophotography frames before stacking.</p>
-        <div class="feature-tag">ARTIFACT FIX</div>
-      </div>
-
-      <div class="feature-card" data-delay="500">
-        <div class="feature-icon">
-          <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="12" width="32" height="24" rx="3" stroke="currentColor" stroke-width="2"/><path d="M16 20 L24 28 L32 20" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><line x1="24" y1="14" x2="24" y2="34" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3"/></svg>
+        <p>Detects and removes stuck/hot pixels from all frames before stacking.</p>
+        <label class="toggle-row">
+          <span>Enable hot pixel removal</span>
+          <div class="toggle active" id="tog-hotpixel"><div class="toggle-knob"></div></div>
+        </label>
+        <div class="slider-row">
+          <span>Detection threshold</span>
+          <input type="range" min="1" max="10" value="5" id="hotpixel-thresh"/>
+          <span class="slider-val" id="hotpixel-thresh-val">5</span>
         </div>
-        <h3>16-bit Output</h3>
-        <p>Exports full 16-bit TIFF files with maximum dynamic range for post-processing in Lightroom, Photoshop, PixInsight, or any image editor of your choice.</p>
-        <div class="feature-tag">HIGH DEPTH</div>
       </div>
 
+    </div>
+
+    <div class="panel-footer">
+      <button class="btn-prev" id="btn-to-load">← Back</button>
+      <button class="btn-next" id="btn-to-settings">Next: Settings →</button>
     </div>
   </section>
 
-  <!-- Supported Formats -->
-  <section class="formats" id="formats">
-    <div class="section-header">
-      <div class="section-tag">// UNIVERSAL SUPPORT</div>
-      <h2 class="section-title">Every Format.<br><span class="accent">Every Camera.</span></h2>
-      <p class="section-desc">Sequator supports virtually every image format used in astrophotography — from RAW sensor data to standard rasters. No conversion required.</p>
+  <!-- ========= PANEL 3: SETTINGS ========= -->
+  <section class="panel" id="panel-settings">
+    <div class="panel-header">
+      <h1>Stacking Settings</h1>
+      <p>Choose your alignment and stacking algorithms, noise reduction, and output options.</p>
     </div>
 
-    <div class="formats-tabs">
-      <button class="tab-btn active" data-tab="raw">RAW Formats</button>
-      <button class="tab-btn" data-tab="standard">Standard</button>
-      <button class="tab-btn" data-tab="specialty">Specialty</button>
-    </div>
+    <div class="settings-grid">
 
-    <div class="formats-panel active" id="tab-raw">
-      <div class="format-grid">
-        <div class="format-item"><span class="fmt-ext">CR2</span><span class="fmt-name">Canon RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">CR3</span><span class="fmt-name">Canon RAW v3</span></div>
-        <div class="format-item"><span class="fmt-ext">NEF</span><span class="fmt-name">Nikon RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">NRW</span><span class="fmt-name">Nikon Compact RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">ARW</span><span class="fmt-name">Sony Alpha RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">SRF</span><span class="fmt-name">Sony RAW Format</span></div>
-        <div class="format-item"><span class="fmt-ext">SR2</span><span class="fmt-name">Sony RAW 2</span></div>
-        <div class="format-item"><span class="fmt-ext">RAF</span><span class="fmt-name">Fujifilm RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">ORF</span><span class="fmt-name">Olympus RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">PEF</span><span class="fmt-name">Pentax RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">DNG</span><span class="fmt-name">Digital Negative (Adobe)</span></div>
-        <div class="format-item"><span class="fmt-ext">RW2</span><span class="fmt-name">Panasonic RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">RWL</span><span class="fmt-name">Leica RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">3FR</span><span class="fmt-name">Hasselblad RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">MRW</span><span class="fmt-name">Minolta RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">X3F</span><span class="fmt-name">Sigma Foveon RAW</span></div>
+      <div class="setting-block">
+        <h3>Star Alignment</h3>
+        <p>Sequator detects stars in each frame and aligns them before stacking.</p>
+        <label class="setting-row">
+          <span>Star detection sensitivity</span>
+          <div class="slider-row-inline">
+            <input type="range" min="1" max="10" value="6" id="star-sensitivity"/>
+            <span class="slider-val" id="star-sensitivity-val">6</span>
+          </div>
+        </label>
+        <label class="setting-row">
+          <span>Min. stars for alignment</span>
+          <input type="number" id="min-stars" value="10" min="3" max="100" class="num-input"/>
+        </label>
+        <label class="setting-row">
+          <span>Sub-pixel alignment</span>
+          <input type="checkbox" id="subpixel" checked/>
+        </label>
       </div>
+
+      <div class="setting-block">
+        <h3>Stacking Method</h3>
+        <p>How aligned frames are combined into the final image.</p>
+        <div class="radio-group" id="stack-method">
+          <label class="radio-option selected" data-value="kappa-sigma">
+            <div class="radio-dot"></div>
+            <div>
+              <strong>Kappa-Sigma Clipping</strong>
+              <span>Best for most cases — rejects outliers statistically</span>
+            </div>
+          </label>
+          <label class="radio-option" data-value="mean">
+            <div class="radio-dot"></div>
+            <div>
+              <strong>Mean (Average)</strong>
+              <span>Simple average of all frames</span>
+            </div>
+          </label>
+          <label class="radio-option" data-value="median">
+            <div class="radio-dot"></div>
+            <div>
+              <strong>Median</strong>
+              <span>Middle value — good for satellite trail removal</span>
+            </div>
+          </label>
+          <label class="radio-option" data-value="winsorized">
+            <div class="radio-dot"></div>
+            <div>
+              <strong>Winsorized Sigma</strong>
+              <span>Sigma clipping with mean replacement</span>
+            </div>
+          </label>
+          <label class="radio-option" data-value="weighted">
+            <div class="radio-dot"></div>
+            <div>
+              <strong>Weighted Average</strong>
+              <span>Better frames get higher weight</span>
+            </div>
+          </label>
+        </div>
+        <div class="kappa-options" id="kappa-options">
+          <div class="slider-row">
+            <span>Kappa (σ multiplier)</span>
+            <input type="range" min="1" max="5" step="0.1" value="2.5" id="kappa-val"/>
+            <span class="slider-val" id="kappa-val-display">2.5</span>
+          </div>
+          <div class="slider-row">
+            <span>Iterations</span>
+            <input type="range" min="1" max="10" value="3" id="kappa-iters"/>
+            <span class="slider-val" id="kappa-iters-val">3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-block">
+        <h3>Sky Gradient Removal</h3>
+        <p>Removes uneven sky background caused by light pollution.</p>
+        <label class="toggle-row">
+          <span>Enable gradient removal</span>
+          <div class="toggle active" id="tog-gradient"><div class="toggle-knob"></div></div>
+        </label>
+        <div class="slider-row">
+          <span>Correction strength</span>
+          <input type="range" min="1" max="10" value="5" id="gradient-strength"/>
+          <span class="slider-val" id="gradient-strength-val">5</span>
+        </div>
+        <label class="setting-row">
+          <span>Per-frame correction</span>
+          <input type="checkbox" id="per-frame-gradient" checked/>
+        </label>
+      </div>
+
+      <div class="setting-block">
+        <h3>Foreground Mode</h3>
+        <p>Separate foreground from sky for Milky Way landscape composites.</p>
+        <label class="toggle-row">
+          <span>Enable foreground separation</span>
+          <div class="toggle" id="tog-foreground"><div class="toggle-knob"></div></div>
+        </label>
+        <label class="setting-row" id="row-horizon">
+          <span>Horizon line (% from top)</span>
+          <div class="slider-row-inline">
+            <input type="range" min="10" max="90" value="60" id="horizon-line"/>
+            <span class="slider-val" id="horizon-val">60%</span>
+          </div>
+        </label>
+        <label class="setting-row" id="row-fg-frames">
+          <span>Frames for foreground</span>
+          <input type="number" id="fg-frames" value="3" min="1" max="20" class="num-input"/>
+        </label>
+      </div>
+
+      <div class="setting-block">
+        <h3>Output</h3>
+        <p>Choose the format and bit depth of your final stacked image.</p>
+        <label class="setting-row">
+          <span>Output format</span>
+          <select id="output-format" class="select-input">
+            <option value="png">PNG (lossless)</option>
+            <option value="jpeg">JPEG (compressed)</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>Auto stretch result</span>
+          <input type="checkbox" id="auto-stretch" checked/>
+        </label>
+        <label class="setting-row">
+          <span>Preserve aspect ratio</span>
+          <input type="checkbox" id="preserve-aspect" checked/>
+        </label>
+      </div>
+
     </div>
 
-    <div class="formats-panel" id="tab-standard">
-      <div class="format-grid">
-        <div class="format-item"><span class="fmt-ext">TIFF</span><span class="fmt-name">Tagged Image File (8/16-bit)</span></div>
-        <div class="format-item"><span class="fmt-ext">TIF</span><span class="fmt-name">Tagged Image File</span></div>
-        <div class="format-item"><span class="fmt-ext">JPG</span><span class="fmt-name">JPEG Compressed</span></div>
-        <div class="format-item"><span class="fmt-ext">JPEG</span><span class="fmt-name">JPEG Full Name</span></div>
-        <div class="format-item"><span class="fmt-ext">PNG</span><span class="fmt-name">Portable Network Graphic</span></div>
-        <div class="format-item"><span class="fmt-ext">BMP</span><span class="fmt-name">Bitmap Image</span></div>
-        <div class="format-item"><span class="fmt-ext">GIF</span><span class="fmt-name">Graphics Interchange Format</span></div>
-        <div class="format-item"><span class="fmt-ext">PPM</span><span class="fmt-name">Portable Pixmap</span></div>
-        <div class="format-item"><span class="fmt-ext">PGM</span><span class="fmt-name">Portable Graymap</span></div>
-      </div>
-    </div>
-
-    <div class="formats-panel" id="tab-specialty">
-      <div class="format-grid">
-        <div class="format-item"><span class="fmt-ext">FIT</span><span class="fmt-name">FITS Astronomical Image</span></div>
-        <div class="format-item"><span class="fmt-ext">FITS</span><span class="fmt-name">Flexible Image Transport</span></div>
-        <div class="format-item"><span class="fmt-ext">FTS</span><span class="fmt-name">FITS Short Extension</span></div>
-        <div class="format-item"><span class="fmt-ext">SER</span><span class="fmt-name">SER Video Sequence</span></div>
-        <div class="format-item"><span class="fmt-ext">AVI</span><span class="fmt-name">AVI Video Frames</span></div>
-        <div class="format-item"><span class="fmt-ext">ERF</span><span class="fmt-name">Epson RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">K25</span><span class="fmt-name">Kodak RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">KDC</span><span class="fmt-name">Kodak Digital Camera</span></div>
-        <div class="format-item"><span class="fmt-ext">DCR</span><span class="fmt-name">Kodak Cineon RAW</span></div>
-        <div class="format-item"><span class="fmt-ext">IIQ</span><span class="fmt-name">Phase One RAW</span></div>
-      </div>
+    <div class="panel-footer">
+      <button class="btn-prev" id="btn-to-calibrate2">← Back</button>
+      <button class="btn-next" id="btn-to-stack">Begin Stacking →</button>
     </div>
   </section>
 
-  <!-- How It Works -->
-  <section class="howto" id="howto">
-    <div class="section-header">
-      <div class="section-tag">// WORKFLOW</div>
-      <h2 class="section-title">From Frames to <span class="accent">Final Image</span></h2>
+  <!-- ========= PANEL 4: STACK ========= -->
+  <section class="panel" id="panel-stack">
+    <div class="panel-header">
+      <h1>Stack &amp; Export</h1>
+      <p>Processing your frames. This may take a few minutes depending on frame count and resolution.</p>
     </div>
-    <div class="steps">
 
-      <div class="step">
-        <div class="step-num">01</div>
-        <div class="step-content">
-          <h3>Load Your Frames</h3>
-          <p>Add your light frames, dark frames, flat frames, and bias frames. Sequator accepts any mix of formats — RAW, TIFF, FITS, JPEG — from any camera brand in a single session.</p>
-          <div class="step-detail">
-            <div class="detail-item">Light Frames</div>
-            <div class="detail-item">Dark Frames</div>
-            <div class="detail-item">Flat Frames</div>
-            <div class="detail-item">Bias Frames</div>
+    <!-- Progress Area -->
+    <div class="stack-status" id="stack-status">
+      <div class="status-idle" id="status-idle">
+        <div class="idle-graphic">
+          <div class="idle-ring r1"></div>
+          <div class="idle-ring r2"></div>
+          <div class="idle-ring r3"></div>
+          <span class="idle-label">READY</span>
+        </div>
+        <p>Configure your settings and click <strong>Start Stacking</strong> to begin processing.</p>
+        <button class="btn-start" id="btn-start">⚡ Start Stacking</button>
+      </div>
+
+      <div class="status-running" id="status-running" style="display:none">
+        <div class="progress-stages" id="progress-stages">
+          <!-- Filled by JS -->
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="progress-label" id="progress-label">Initialising…</div>
+        <div class="log-window" id="log-window"></div>
+      </div>
+
+      <div class="status-done" id="status-done" style="display:none">
+        <div class="result-preview-wrap">
+          <canvas id="result-canvas"></canvas>
+          <div class="result-overlay">
+            <span class="result-badge">STACK COMPLETE</span>
           </div>
         </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">02</div>
-        <div class="step-content">
-          <h3>Configure Stacking</h3>
-          <p>Choose your stacking algorithm, noise reduction level, hot pixel removal, gradient correction, and output format. Fine-tune star detection thresholds for sparse or dense star fields.</p>
-          <div class="step-detail">
-            <div class="detail-item">Mean / Median</div>
-            <div class="detail-item">Kappa-Sigma</div>
-            <div class="detail-item">Weighted Average</div>
-            <div class="detail-item">Winsorized Sigma</div>
-          </div>
+        <div class="result-stats" id="result-stats"></div>
+        <div class="result-actions">
+          <button class="btn-download" id="btn-download">↓ Download Result</button>
+          <button class="btn-secondary" id="btn-reset">↺ Start Over</button>
         </div>
       </div>
+    </div>
 
-      <div class="step">
-        <div class="step-num">03</div>
-        <div class="step-content">
-          <h3>Align &amp; Stack</h3>
-          <p>Sequator automatically registers all frames using star pattern matching, corrects for Earth rotation and tracking errors, then blends the aligned frames into a single master image.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">04</div>
-        <div class="step-content">
-          <h3>Export &amp; Process</h3>
-          <p>Save your 16-bit TIFF master for further processing in Lightroom, Photoshop, PixInsight, or Siril. Full dynamic range preserved for maximum post-processing latitude.</p>
-        </div>
-      </div>
-
+    <div class="panel-footer" id="stack-footer">
+      <button class="btn-prev" id="btn-to-settings2">← Back to Settings</button>
     </div>
   </section>
 
-  <!-- Download Section -->
-  <section class="download" id="download">
-    <div class="download-bg-grid"></div>
-    <div class="download-inner">
-      <div class="dl-badge">FREE &amp; OPEN USE</div>
-      <h2 class="dl-title">Ready to Reach the Stars?</h2>
-      <p class="dl-desc">Sequator is free for non-commercial use. No subscriptions, no cloud, no accounts. Just download and start stacking.</p>
-      <div class="dl-card">
-        <div class="dl-info">
-          <div class="dl-version">
-            <span class="mono">Sequator</span>
-            <span class="version-tag">v1.6.2 r2</span>
-          </div>
-          <div class="dl-meta">
-            <span>Aug 18, 2024</span>
-            <span class="sep">·</span>
-            <span>Windows x64</span>
-            <span class="sep">·</span>
-            <span>~11 MB</span>
-          </div>
-          <div class="dl-req">
-            Requires <a href="https://www.microsoft.com/en-US/download/details.aspx?id=48145" target="_blank">Visual C++ 2015 Redistributable x64</a>
-          </div>
-        </div>
-        <a href="Sequator162r2.zip" download class="btn-download">
-          <span>↓</span>
-          <div>
-            <strong>Download ZIP</strong>
-            <small>Sequator162r2.zip</small>
-          </div>
-        </a>
-      </div>
-      <p class="dl-legal">For non-commercial use only. See README.txt for full license terms. Developed by Yi-Ruei Wu.</p>
-    </div>
-  </section>
+</main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-logo">
-        <span class="logo-bracket">[</span>
-        <span class="logo-text">SEQUATOR</span>
-        <span class="logo-bracket">]</span>
-      </div>
-      <div class="footer-links">
-        <a href="https://sites.google.com/view/sequator/" target="_blank">Official Site</a>
-        <a href="#features">Features</a>
-        <a href="#formats">Formats</a>
-        <a href="#download">Download</a>
-      </div>
-      <p class="footer-copy">Sequator by Yi-Ruei Wu · All rights reserved · Non-commercial use only</p>
-    </div>
-  </footer>
+<!-- Lightbox for frame preview -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-bg" id="lightbox-bg"></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <img id="lightbox-img" src="" alt="Frame preview"/>
+    <div class="lightbox-info" id="lightbox-info"></div>
+  </div>
+</div>
 
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
